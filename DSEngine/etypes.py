@@ -1,8 +1,12 @@
 import pygame, sys
-import PySimpleGUI as sg
 import psutil, time
 from .camera import Camera2D
 from .tiles import TileMap
+
+SG_needed=False #Set to True when you need PySimpleGui
+
+if SG_needed:
+    import PySimpleGUI as sg
 
 def key_to_scancode(key: str):
     return pygame.key.key_code(key)
@@ -18,6 +22,7 @@ class Window:
         pygame.display.set_caption(title)
         self.clock = pygame.time.Clock()
         self.delta = 0
+        self.delta_s = 0
         self.elapsed_ms = 0
         self.seconds = 0
         self.no_update = False
@@ -69,6 +74,7 @@ class Window:
         self.prev_keys=self.pressed_keys
         global keys
         self.delta = self.clock.tick(self.fps)
+        self.delta_s = self.delta/1000
         self.elapsed_ms += self.delta
         self.seconds = self.elapsed_ms/100
         if not self.no_update:
