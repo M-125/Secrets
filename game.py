@@ -1,7 +1,7 @@
 from DSEngine import *
 from pygame import Vector2
 from pygame.display import update
-from classes import inventory
+from classes import dialogue
 
 window = Window(fps=120, size=(1280, 720))
 type2d = Type2D("GUI")

@@ -1,1 +1,2 @@
-from . import *
+from . import inventory
+from . import dialogue
