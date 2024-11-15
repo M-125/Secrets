@@ -8,7 +8,7 @@ from DSEngine import *
 from pygame import Vector2
 from pygame.display import update
 #from classes import dialogue
-from classes import sound_utils
+#from classes import sound_utils
 from functools import partial
 import glob
 
@@ -90,8 +90,13 @@ class Main:
     def convert_paths_to_images(self, paths_list):
         return [Image2D(path) for path in paths_list]
         
-    def img_glob(self, query):
-        return self.convert_paths_to_images(glob.glob(query))
+    def img_glob(self, query:str):
+        query=glob.glob(query)
+        list=[]
+        for e in query:
+            list.append(e.replace("\\","/")) #trying to fix with making all slashes into forward slash (/) spoiler: it didnt work
+        
+        return self.convert_paths_to_images(list)
         
     def __postinit__(self):
         self.type2d = Type2D("GUI")
@@ -108,10 +113,10 @@ class Main:
         self.idle_right_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_right_*"))
 
         ### PLAYER WALKING SHEETS
-        self.walking_up_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_up_*"))
-        self.walking_down_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_down_*"))
-        self.walking_left_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_left_*"))
-        self.walking_right_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_right_*"))
+        self.walking_up_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_up_*"))
+        self.walking_down_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_down_*"))
+        self.walking_left_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_left_*"))
+        self.walking_right_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_right_*")) #walking != walk
 
         ### PLAYER ANIMATION SHEET
         self.player_animation_sheet = AnimationSheet(
@@ -129,15 +134,19 @@ class Main:
         # Creating the player using all that stuff
         self.player = AnimatedSprite2D(sheet=self.player_animation_sheet, position=Vector2(*self.player_state["coords"]))
 
+        self.player.init(self.window)# Mari u forgot to init the player
     
     def change_player_state(self, new_direction=None, offset_x=0, offset_y=0, new_state = None):
         if new_direction:
             self.player_state["direction"] = new_direction
             self.player.play_sheet(self.player_state["state"] + "_" + self.player_state["direction"])
+        
         if (not offset_x == 0) or (not offset_y == 0):
             self.player_state["coords"] = (self.player_state["coords"][0] + offset_x, self.player_state["coords"][1] + offset_y)
+        
         if new_state:
             self.player.play_sheet(self.player_state["state"] + "_" + self.player_state["direction"])
+        
     
     def __main__(self):
         key_actions = {
@@ -156,11 +165,13 @@ class Main:
             
             for action_key, callable in key_actions.items():
                 if keys[action_key]: # The key is pressed
-                    print(f"{action_key} is pressed.")
+                    #print(f"{action_key} is pressed.")
                     callable() # Call the partialised method
-                    print(f"Player sheet is {self.player.current_sheet}")
-                    print(f"Player image is {self.player.image}")
+                    #print(f"Player sheet is {[e.name for e in self.player.current_sheet.sheet]}")
+                    print(f"Player image is {[e.name for e in self.player.current_sheet.sheet]} {self.player.current_sheet.sheet[self.player.frame].name}")
+                    self.player.current_sheet.sheet[self.player.frame].render(self.window)
+                    print(self.player.current_sheet.sheet[self.player.frame].position)
             
-            self.player.render(self.window)
+            #self.player.render(self.window)
              
 main = Main(120, 1280, 720)
