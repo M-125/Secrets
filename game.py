@@ -9,6 +9,7 @@ from pygame import Vector2
 from pygame.display import update
 #from classes import dialogue
 from classes import sound_utils
+from functools import partial
 import glob
 
 # window = Window(fps=120, size=(1280, 720))
@@ -132,22 +133,24 @@ class Main:
     
     def __main__(self):
         key_actions = {
-            pygame.key.key_code('w'): self.change_player_state(offset_y=-2, new_direction="up"),
-            pygame.key.key_code('s'): self.change_player_state(offset_y=2, new_direction="down"),
-            pygame.key.key_code('a'): self.change_player_state(offset_x=-2, new_direction="left"),
-            pygame.key.key_code('d'): self.change_player_state(offset_x=2, new_direction="right"),
-            pygame.K_UP: self.change_player_state(offset_y=-2, new_direction="up"),
-            pygame.K_DOWN: self.change_player_state(offset_y=2, new_direction="down"),
-            pygame.K_LEFT: self.change_player_state(offset_x=-2, new_direction="left"),
-            pygame.K_RIGHT: self.change_player_state(offset_x=2, new_direction="right")
-            # why can't dictionaries just accept lists as MKSV already
+            pygame.key.key_code('w'): partial(self.change_player_state, offset_y=-2, new_direction="up"),
+            pygame.key.key_code('s'): partial(self.change_player_state, offset_y=2, new_direction="down"),
+            pygame.key.key_code('a'): partial(self.change_player_state, offset_x=-2, new_direction="left"),
+            pygame.key.key_code('d'): partial(self.change_player_state, offset_x=2, new_direction="right"),
+            pygame.K_UP: partial(self.change_player_state, offset_y=-2, new_direction="up"),
+            pygame.K_DOWN: partial(self.change_player_state, offset_y=2, new_direction="down"),
+            pygame.K_LEFT: partial(self.change_player_state, offset_x=-2, new_direction="left"),
+            pygame.K_RIGHT: partial(self.change_player_state, offset_x=2, new_direction="right")
         }
         
         while self.window.running:
             keys = self.window.frame()
             
+            for action_key, callable in key_actions.items():
+                if keys[action_key]: # The key is pressed
+                    print(f"{action_key} is pressed.")
+                    callable() # Call the partialised method
+            
             self.player.render(self.window)
              
 main = Main(120, 1280, 720)
-        
-        
