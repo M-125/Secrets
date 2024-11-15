@@ -77,13 +77,21 @@ class Main:
         
     def update_player(self, item_id, old_value, new_value): # When the self.player_state dictionary is updated, this method is called. Allows management of the players state in a single central area.
         if item_id == "coords":
-            self.player.position = pygame.Vector2(new_value[0], new_value[1])
+            #self.player.position = pygame.Vector2(new_value[0], new_value[1])
+            self.player.move(pygame.Vector2(new_value[0], new_value[1]))
+            print(f"Player was moved to x={new_value[0]}, y={new_value[1]}")
         elif item_id == "direction":
             self.player.play_sheet(self.player_state["state"] + "_" + new_value)
         elif item_id == "state":
             self.player.play_sheet(new_value + "_" + self.player_state["direction"])
         else:
             pass
+            
+    def convert_paths_to_images(self, paths_list):
+        return [Image2D(path) for path in paths_list]
+        
+    def img_glob(self, query):
+        return self.convert_paths_to_images(glob.glob(query))
         
     def __postinit__(self):
         self.type2d = Type2D("GUI")
@@ -94,16 +102,16 @@ class Main:
         self.player_default = Image2D(filename=f"assets/textures/player/idle_{self.player_state['direction']}_0000.png", position=Vector2(*self.player_state["coords"])) # why does an image have a position? does this not represent an abstract idea of an image? i guess i'll find out somehow
 
         ### PLAYER IDLE SHEETS
-        self.idle_up_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/idle_up_*"))
-        self.idle_down_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/idle_down_*"))
-        self.idle_left_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/idle_left_*"))
-        self.idle_right_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/idle_right_*"))
+        self.idle_up_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_up_*"))
+        self.idle_down_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_down_*"))
+        self.idle_left_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_left_*"))
+        self.idle_right_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_right_*"))
 
         ### PLAYER WALKING SHEETS
-        self.walking_up_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/walking_up_*"))
-        self.walking_down_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/walking_down_*"))
-        self.walking_left_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/walking_left_*"))
-        self.walking_right_sheet = Spritesheet(self.player_frame_time, *glob.glob("assets/textures/player/walking_right_*"))
+        self.walking_up_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_up_*"))
+        self.walking_down_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_down_*"))
+        self.walking_left_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_left_*"))
+        self.walking_right_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walking_right_*"))
 
         ### PLAYER ANIMATION SHEET
         self.player_animation_sheet = AnimationSheet(
@@ -150,6 +158,8 @@ class Main:
                 if keys[action_key]: # The key is pressed
                     print(f"{action_key} is pressed.")
                     callable() # Call the partialised method
+                    print(f"Player sheet is {self.player.current_sheet}")
+                    print(f"Player image is {self.player.image}")
             
             self.player.render(self.window)
              
