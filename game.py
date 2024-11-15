@@ -77,7 +77,7 @@ class Main:
         
     def update_player(self, item_id, old_value, new_value): # When the self.player_state dictionary is updated, this method is called. Allows management of the players state in a single central area.
         if item_id == "coords":
-            self.player.position = new_value
+            self.player.position = pygame.Vector2(new_value[0], new_value[1])
         elif item_id == "direction":
             self.player.play_sheet(self.player_state["state"] + "_" + new_value)
         elif item_id == "state":
