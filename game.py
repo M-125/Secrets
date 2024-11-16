@@ -11,6 +11,7 @@ from pygame.display import update
 #from classes import sound_utils
 from functools import partial
 import glob
+import re
 
 # window = Window(fps=120, size=(1280, 720))
 # type2d = Type2D("GUI")
@@ -79,7 +80,7 @@ class Main:
         if item_id == "coords":
             #self.player.position = pygame.Vector2(new_value[0], new_value[1])
             self.player.move(pygame.Vector2(new_value[0], new_value[1]))
-            print(f"Player was moved to x={new_value[0]}, y={new_value[1]}")
+            #print(f"Player was moved to x={new_value[0]}, y={new_value[1]}")
         elif item_id == "direction":
             self.player.play_sheet(self.player_state["state"] + "_" + new_value)
         elif item_id == "state":
@@ -88,16 +89,14 @@ class Main:
             pass
             
     def convert_paths_to_images(self, paths_list):
-        return [Image2D(path) for path in paths_list]
-        
-    def img_glob(self, query:str):
-        query=glob.glob(query)
-        list=[]
-        for e in query:
-            list.append(e.replace("\\","/")) #trying to fix with making all slashes into forward slash (/) spoiler: it didnt work
-        
-        return self.convert_paths_to_images(list)
-        
+        images_list = []
+        for path in paths_list:
+            new_img = Image2D(path)
+            new_img.init(self.window)
+            images_list.append(new_img)
+        return images_list
+    
+
     def __postinit__(self):
         self.type2d = Type2D("GUI")
         self.type2d.init(self.window)
@@ -107,16 +106,24 @@ class Main:
         self.player_default = Image2D(filename=f"assets/textures/player/idle_{self.player_state['direction']}_0000.png", position=Vector2(*self.player_state["coords"])) # why does an image have a position? does this not represent an abstract idea of an image? i guess i'll find out somehow
 
         ### PLAYER IDLE SHEETS
-        self.idle_up_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_up_*"))
-        self.idle_down_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_down_*"))
-        self.idle_left_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_left_*"))
-        self.idle_right_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/idle_right_*"))
+
+        #TODO: Change these to non-glob things
+
+        self.idle_up_sheet = Spritesheet(self.player_frame_time, Image2D("assets/textures/player/idle_up_0000.png"))
+        self.idle_down_sheet = Spritesheet(self.player_frame_time, Image2D("assets/textures/player/idle_down_0000.png"))
+        self.idle_left_sheet = Spritesheet(self.player_frame_time, Image2D("assets/textures/player/idle_left_0000.png"))
+        self.idle_right_sheet = Spritesheet(self.player_frame_time, Image2D("assets/textures/player/idle_right_0000.png"))
 
         ### PLAYER WALKING SHEETS
-        self.walking_up_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_up_*"))
-        self.walking_down_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_down_*"))
-        self.walking_left_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_left_*"))
-        self.walking_right_sheet = Spritesheet(self.player_frame_time, *self.img_glob("assets/textures/player/walk_right_*")) #walking != walk
+        self.walking_up_sheet = Spritesheet(self.player_frame_time, Image2D("assets/textures/player/walk_up_0000.png"), Image2D("assets/textures/player/walk_up_0002.png"), Image2D("assets/textures/player/walk_up_0004.png"), Image2D("assets/textures/player/walk_up_0006.png"))
+        self.walking_down_sheet = Spritesheet(self.player_frame_time,  Image2D("assets/textures/player/walk_down_0000.png"), Image2D("assets/textures/player/walk_down_0002.png"), Image2D("assets/textures/player/walk_down_0004.png"), Image2D("assets/textures/player/walk_down_0006.png"))
+        self.walking_left_sheet = Spritesheet(self.player_frame_time,  Image2D("assets/textures/player/walk_left_0000.png"), Image2D("assets/textures/player/walk_left_0002.png"), Image2D("assets/textures/player/walk_left_0004.png"), Image2D("assets/textures/player/walk_left_0006.png"))
+        self.walking_right_sheet = Spritesheet(self.player_frame_time,  Image2D("assets/textures/player/walk_right_0000.png"), Image2D("assets/textures/player/walk_right_0002.png"), Image2D("assets/textures/player/walk_right_0004.png"), Image2D("assets/textures/player/walk_right_0006.png")) #walking != walk
+
+        #NOTE: still doesn't render even with direct paths uff
+
+        print(f"Postinit - type of asset is {type(Image2D('assets/textures/player/walk_right_0000.png'))}")
+        # Postinit - type of asset is <class 'DSEngine.etypes.Image2D'>
 
         ### PLAYER ANIMATION SHEET
         self.player_animation_sheet = AnimationSheet(
@@ -133,13 +140,14 @@ class Main:
         
         # Creating the player using all that stuff
         self.player = AnimatedSprite2D(sheet=self.player_animation_sheet, position=Vector2(*self.player_state["coords"]))
-
+        self.player.debug=True
         self.player.init(self.window)# Mari u forgot to init the player
     
     def change_player_state(self, new_direction=None, offset_x=0, offset_y=0, new_state = None):
         if new_direction:
             self.player_state["direction"] = new_direction
             self.player.play_sheet(self.player_state["state"] + "_" + self.player_state["direction"])
+            print(self.player_state["state"]+"_"+self.player_state["direction"])
         
         if (not offset_x == 0) or (not offset_y == 0):
             self.player_state["coords"] = (self.player_state["coords"][0] + offset_x, self.player_state["coords"][1] + offset_y)
@@ -150,28 +158,23 @@ class Main:
     
     def __main__(self):
         key_actions = {
-            pygame.key.key_code('w'): partial(self.change_player_state, offset_y=-2, new_direction="up"),
-            pygame.key.key_code('s'): partial(self.change_player_state, offset_y=2, new_direction="down"),
-            pygame.key.key_code('a'): partial(self.change_player_state, offset_x=-2, new_direction="left"),
-            pygame.key.key_code('d'): partial(self.change_player_state, offset_x=2, new_direction="right"),
-            pygame.K_UP: partial(self.change_player_state, offset_y=-2, new_direction="up"),
-            pygame.K_DOWN: partial(self.change_player_state, offset_y=2, new_direction="down"),
-            pygame.K_LEFT: partial(self.change_player_state, offset_x=-2, new_direction="left"),
-            pygame.K_RIGHT: partial(self.change_player_state, offset_x=2, new_direction="right")
+            pygame.key.key_code('w'): partial(self.change_player_state, offset_y=-2, new_direction="up", new_state="walking"),
+            pygame.key.key_code('s'): partial(self.change_player_state, offset_y=2, new_direction="down", new_state="walking"),
+            pygame.key.key_code('a'): partial(self.change_player_state, offset_x=-2, new_direction="left", new_state="walking"),
+            pygame.key.key_code('d'): partial(self.change_player_state, offset_x=2, new_direction="right", new_state="walking"),
+            pygame.K_UP: partial(self.change_player_state, offset_y=-2, new_direction="up", new_state="walking"),
+            pygame.K_DOWN: partial(self.change_player_state, offset_y=2, new_direction="down", new_state="walking"),
+            pygame.K_LEFT: partial(self.change_player_state, offset_x=-2, new_direction="left", new_state="walking"),
+            pygame.K_RIGHT: partial(self.change_player_state, offset_x=2, new_direction="right", new_state="walking")
         }
-        
+
         while self.window.running:
             keys = self.window.frame()
             
             for action_key, callable in key_actions.items():
-                if keys[action_key]: # The key is pressed
-                    #print(f"{action_key} is pressed.")
-                    callable() # Call the partialised method
-                    #print(f"Player sheet is {[e.name for e in self.player.current_sheet.sheet]}")
-                    print(f"Player image is {[e.name for e in self.player.current_sheet.sheet]} {self.player.current_sheet.sheet[self.player.frame].name}")
+                if keys[action_key]:
+                    callable()
                     self.player.current_sheet.sheet[self.player.frame].render(self.window)
-                    print(self.player.current_sheet.sheet[self.player.frame].position)
-            
-            #self.player.render(self.window)
+                    #print(self.player.current_sheet.sheet[self.player.frame].position)
              
 main = Main(120, 1280, 720)
