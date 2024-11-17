@@ -1,29 +1,31 @@
 import json
-import pygame
+
 class Dialogue:
     def __init__(self,dialogue_name) -> None:
         self.dialogue_name = dialogue_name
         self.dialogues=json.load(open("assets/dialogues/"+dialogue_name+".json"))
         self.current_dialogue=""
+        print(self.dialogues)
     
     def dialogue(self,option=""):
 
 ###get dialogue
         if self.current_dialogue=="":
             self.current_dialogue="dialogue/0"
-        self.current_dialogue+=option
+        if option!="":self.current_dialogue+="/"+option
         dialogue=self.dialogues
 
         for e in self.current_dialogue.split("/"):
+            print(self.current_dialogue.split("/"))
             if e.isnumeric():
                 e=int(e)
             dialogue=dialogue[e]
 
 #print dialogue
+        print(dialogue)
+        if type(dialogue) == str:
 
-        if dialogue is str:
-
-            ### move to next dialogue
+            ### move to next dialogue if dialogue part is just some text
             strings=self.current_dialogue.split("/")
             while not strings[-1].isnumeric():
                 strings.pop()
@@ -34,15 +36,28 @@ class Dialogue:
                 self.current_dialogue+=e
             
             try:
-                self.dialogue[self.current_dialogue]
-            except IndexError:
-                return None
+                self.dialogues[self.current_dialogue]
+            except KeyError:
+                return self.dialogues["name"],dialogue,["end"] 
             #return dialogue
-            return self.dialogues["name"],dialogue
+            return self.dialogues["name"],dialogue,[]
         
 
-        if dialogue is dict:
-            return self.dialogues["name"],dialogue["text"],dialogue["options"]
-        
+        if type(dialogue) == dict:
+            if "options" in dialogue:return self.dialogues["name"],dialogue["text"],dialogue["options"]
+            else:
+            	
+                strings=self.current_dialogue.split("/")
+            while not strings[-1].isnumeric():
+                strings.pop()
+            if strings[-1]!="dialogue":
+                strings[-1]=str(int(strings[-1])+1)
+            self.current_dialogue=""
+            for e in strings:
+                self.current_dialogue+=e
             
+            try:
+                self.dialogues[self.current_dialogue]
+            except KeyError:
+                return "finish"
 
