@@ -3,6 +3,10 @@
     "hellou",
     {"text":"How are you","options":[
         "im fine",
-        "im not fine"]
+        "im not fine"],
+        
+        
+        "im fine":"great to hear",
+        "im not fine":"Oh no! whats wrong"
     }
 ]}
