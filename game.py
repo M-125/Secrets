@@ -140,7 +140,7 @@ class Main:
         
         # Creating the player using all that stuff
         self.player = AnimatedSprite2D(sheet=self.player_animation_sheet, position=Vector2(*self.player_state["coords"]))
-        self.player.debug=True
+        
         self.player.init(self.window)# Mari u forgot to init the player
     
     def change_player_state(self, new_direction=None, offset_x=0, offset_y=0, new_state = None):
