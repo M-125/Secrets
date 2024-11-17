@@ -16,13 +16,13 @@ class Dialogue:
         dialogue=self.dialogues
         print(self.current_dialogue)
         for e in self.current_dialogue.split("/"):
-            print(self.current_dialogue.split("/"))
+            
             if e.isnumeric():
                 e=int(e)
             dialogue=dialogue[e]
 
 #print dialogue
-        print(dialogue)
+        
         if type(dialogue) == str:
 
             ### move to next dialogue if dialogue part is just some text
