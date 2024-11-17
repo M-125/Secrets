@@ -250,6 +250,8 @@ class Rect2D(Type2D):
         #self.position = pygame.Vector2(self.position.x+vecx, self.position.y+vecy)
         #self.rect.topleft = (self.position.x, self.position.y)
         self.prev_pos = self.position
+    def move_to(self,pos:pygame.Vector2):
+        self.move(pos-self.position)
 
 class Surface(Rect2D):
     def __init__(self, layer=1, position=pygame.Vector2(0.0, 0.0), color=(255, 255, 255), size=pygame.Vector2(100.0, 100.0),offset=pygame.Vector2(0,0)):

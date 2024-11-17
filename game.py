@@ -79,7 +79,7 @@ class Main:
     def update_player(self, item_id, old_value, new_value): # When the self.player_state dictionary is updated, this method is called. Allows management of the players state in a single central area.
         if item_id == "coords":
             #self.player.position = pygame.Vector2(new_value[0], new_value[1])
-            self.player.move(pygame.Vector2(new_value[0], new_value[1]))
+            self.player.move_to(pygame.Vector2(new_value[0], new_value[1])) # move is using velocity and not position so created move_to
             #print(f"Player was moved to x={new_value[0]}, y={new_value[1]}")
         elif item_id == "direction":
             self.player.play_sheet(self.player_state["state"] + "_" + new_value)
@@ -151,10 +151,10 @@ class Main:
         
         if (not offset_x == 0) or (not offset_y == 0):
             self.player_state["coords"] = (self.player_state["coords"][0] + offset_x, self.player_state["coords"][1] + offset_y)
-        
+            print((offset_x,offset_y,self.player_state["coords"]))
         if new_state:
             self.player.play_sheet(self.player_state["state"] + "_" + self.player_state["direction"])
-        
+        print(self.player.position)
     
     def __main__(self):
         key_actions = {
