@@ -14,7 +14,7 @@ class Dialogue:
             self.current_dialogue="dialogue/0"
         if option!="":self.current_dialogue+="/"+option
         dialogue=self.dialogues
-
+        print(self.current_dialogue)
         for e in self.current_dialogue.split("/"):
             print(self.current_dialogue.split("/"))
             if e.isnumeric():
@@ -33,6 +33,7 @@ class Dialogue:
                 strings[-1]=str(int(strings[-1])+1)
             self.current_dialogue=""
             for e in strings:
+                if e !="dialogue":self.current_dialogue+="/"
                 self.current_dialogue+=e
             
             try:
@@ -54,6 +55,7 @@ class Dialogue:
                 strings[-1]=str(int(strings[-1])+1)
             self.current_dialogue=""
             for e in strings:
+                if e !="dialogue":self.current_dialogue+="/"
                 self.current_dialogue+=e
             
             try:
