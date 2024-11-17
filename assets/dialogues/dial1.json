@@ -1,0 +1,7 @@
+{"dialogue":[
+    "hellou",
+    {"text":"How are you","options":[
+        "im fine",
+        "im not fine"]
+    }
+]}
