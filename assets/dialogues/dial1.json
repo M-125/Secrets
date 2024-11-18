@@ -1,5 +1,10 @@
-{"name":"mynameis",
+{"name":"the guy who loves ducks",
 "dialogue":[
+    {"_jumponly":"","duck":["YOU CANT LEAVE UNTIL WE TALKED ABOUT DUCKS",{"_jump":"2"}]},
+
+
+
+
     "hellou",
     {"text":"How are you","options":[
         "im fine",
@@ -7,10 +12,17 @@
         
         
         "im fine":"great to hear",
-        "im not fine":["Oh no! whats wrong","rjejerjejeue",{"text":"ducks or geese","options":["ducks","geese"],
-        "ducks":"quack",
+        "im not fine":["Oh no! whats wrong",{"text":"ducks or geese","options":["ducks","geese"],
+        "ducks":["ducks are great animals","i like how they...","QUACK",{"_give_dialogue":"ducks"},{"_jump":"2"}],
         "geese":"honk"
 }]
     },
+"did we talk about ducks?",
+{"_hasdialogue":"ducks","true":"","false":"0/duck"},
+"Yes we did, so i will let you go",
 "goodbye"
+
+
+
+
 ]}

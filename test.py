@@ -1,10 +1,11 @@
-from classes import dialogue
-dia=dialogue.Dialogue("dial1")
+from classes import dialogue,inventory
+inv=inventory.Inventory()
+dia=dialogue.Dialogue("dial1",inv)
 Input=""
 opt=""
-while opt!="ended":
+while opt!=["_end"]:
  
  name,text,opt=dia.dialogue(Input)
- print(name,text)
+ print(f"\n__________________\n[{name}]   {text}")
 
- Input=input(opt)
+ Input=input("options: "+str(opt)+"\n__________________\n>")
