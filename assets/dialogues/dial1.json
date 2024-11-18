@@ -7,6 +7,10 @@
         
         
         "im fine":"great to hear",
-        "im not fine":"Oh no! whats wrong"
-    }
+        "im not fine":["Oh no! whats wrong","rjejerjejeue",{"text":"ducks or geese","options":["ducks","geese"],
+        "ducks":"quack",
+        "geese":"honk"
+}]
+    },
+"goodbye"
 ]}
