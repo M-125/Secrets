@@ -24,3 +24,5 @@ class Inventory:
         if not self.has_dialogue_item(name):
             self.dialogueItems.append(name)
     
+    def add_item(self,Item):
+        self.Items.append(Item)

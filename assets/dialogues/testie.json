@@ -1,0 +1,63 @@
+{
+    "name":"Tester",
+    "dialogue":[
+        {
+            "_jumponly":"",
+            "label0":[
+                "Landed on Jump 1."
+            ]
+        },
+        {
+            "_jumponly":"",
+            "label1":[
+                "Landed on Jump 2."
+            ]
+        },
+        {
+            "_jumponly":"",
+            "label2":[
+                "Landed on Jump 3."
+            ]
+        },
+        {
+            "_jumponly":"",
+            "label3":[
+                "You're in limbo now."
+            ]
+        },
+        {
+            "_jumponly":"",
+            "room1":{
+                "text": "You are now in THE ROOM.", "options": ["1", "2", "3"],
+                "1":  {"_jump":"8"},
+                "2":  {"_jump":"8"},
+                "3":  {"_jump":"5/2/"}
+            },
+            "dead": {
+                "_jumponly":"",
+                "die":[
+                    "So you chose...",
+                    "... DEAD!",
+                    {"_jump":"8"}
+                ]
+            }
+        },
+        
+        "Hello, welcome to the dialogue test.",
+        "Please choose one of the following.",
+        {
+            "text": "See if this works"
+        },
+        
+        {
+            "text":"Where to jump?","options":["jump1", "jump2", "jump3", "Say hello", "exit"],
+            "jump1": {"_jump":"0/label0"},
+            "jump2": {"_jump":"1/label1"},
+            "jump3": {"_jump":"2/label2"},
+            "Say hello": {"_jump":"3/label3"},
+            "exit": {"_jump":"8"}
+        },
+
+        "That will be all."
+    ]
+}

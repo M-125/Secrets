@@ -1,6 +1,6 @@
 from classes import dialogue,inventory
 inv=inventory.Inventory()
-dia=dialogue.Dialogue("dial1",inv)
+dia=dialogue.Dialogue(input(">"),inv)
 Input=""
 opt=""
 while opt!=["_end"]:

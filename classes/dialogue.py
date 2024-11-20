@@ -57,7 +57,7 @@ class Dialogue:
     def dialogue(self,option=""):
       if not self.ended:
 ###get dialogue
-        print(self.current_dialogue)
+        
         if self.current_dialogue=="":
             self.current_dialogue="dialogue/0"
         if option!="":self.current_dialogue+="/"+option
@@ -72,7 +72,7 @@ class Dialogue:
 #print dialogue
         
         if type(dialogue) == str:
-
+            print(self.current_dialogue)
             
             if self.next() :
                 return self.dialogues["name"],dialogue,[]
@@ -81,6 +81,7 @@ class Dialogue:
         
 
         if type(dialogue) == dict:
+            print(self.current_dialogue)
             if "options" in dialogue:return self.dialogues["name"],dialogue["text"],dialogue["options"]
             
             ### JUMP command
@@ -97,8 +98,17 @@ class Dialogue:
                     return self.jump(dialogue["true"])
                 else:
                     return self.jump(dialogue["false"])
+            #check for normal items
+            elif "_hasitem" in dialogue:
+                if self.inventory.has_item(dialogue["_hasitem"]):
+                    return self.jump(dialogue["true"])
+                else:
+                    return self.jump(dialogue["false"])
             elif "_give_dialogue" in dialogue:
                 self.inventory.add_dialogue_item(dialogue["_give_dialogue"])
+                return self.skip()
+            elif "_give_item" in dialogue:
+                self.inventory.add_item(dialogue["_give_item"])
                 return self.skip()
             else:
                 if self.next(): return self.dialogues["name"],dialogue["text"],[]

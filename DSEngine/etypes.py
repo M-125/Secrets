@@ -206,7 +206,7 @@ class Rect2D(Type2D):
         if self.visible:
             self.window = window
             self.detect_collisions()
-            self.rect.topleft = (self.position.x+self.collisionoffset.x+window.current_camera.position.x, self.position.y+self.collisionoffset.y+window.current_camera.position.y)
+            self.rect.topleft = (self.position.x+self.collisionoffset.x-window.current_camera.position.x, self.position.y+self.collisionoffset.y-window.current_camera.position.y)
             if not self.invisible: pygame.draw.rect(window.surface, self.color, self.rect)
             super().render(window)
             for e in self.tweens:
@@ -268,7 +268,7 @@ class Surface(Rect2D):
         if self.visible:
             self.window = window
             self.detect_collisions()
-            self.rect.topleft = (self.position.x+self.collisionoffset.x+window.current_camera.position.x, self.position.y+self.collisionoffset.y+window.current_camera.position.y)
+            self.rect.topleft = (self.position.x+self.collisionoffset.x-window.current_camera.position.x, self.position.y+self.collisionoffset.y-window.current_camera.position.y)
             window.surface.blit(self.surface,self.position,self.rect)
     
     def frame(self):
@@ -325,7 +325,7 @@ class Image2D(Rect2D):
     def render(self, window: Window):
         if self.visible:
             unoffset=pygame.Vector2(self.collisionoffset.x,self.collisionoffset.y)
-            self.rect.topleft = (self.position.x+self.collisionoffset.x+window.current_camera.position.x, self.position.y+self.collisionoffset.y+window.current_camera.position.y)
+            self.rect.topleft = (self.position.x+self.collisionoffset.x-window.current_camera.position.x, self.position.y+self.collisionoffset.y-window.current_camera.position.y)
             window.surface.blit(pygame.transform.scale(self.image, (self.size.x, self.size.y)) if self.size != None else self.image, self.rect.topleft-unoffset)
             self.detect_collisions()
             if self.debug:
@@ -366,7 +366,7 @@ class Area2D(Rect2D):
     
     def render(self, window: Window):
         if self.visible:
-            self.rect.topleft = (self.position.x+self.collisionoffset.x+window.current_camera.position.x, self.position.y+self.collisionoffset.y+window.current_camera.position.y)
+            self.rect.topleft = (self.position.x+self.collisionoffset.x-window.current_camera.position.x, self.position.y+self.collisionoffset.y-window.current_camera.position.y)
 
             # window.surface.blit(self.image, self.rect)
             self.detect_collisions()

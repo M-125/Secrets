@@ -38,6 +38,15 @@ import re
     # sprite.move(acc)
     # update()
 
+class Player(AnimatedSprite2D):
+    def __init__(self,**args):
+
+        super().__init__(**args)
+        self.debug=True
+    def render(self,window:Window):
+        window.current_camera.position=self.position-tuple(divide/2 for divide in window.size)
+        super().render(window)
+
 class HookedDict(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -139,9 +148,11 @@ class Main:
         )
         
         # Creating the player using all that stuff
-        self.player = AnimatedSprite2D(sheet=self.player_animation_sheet, position=Vector2(*self.player_state["coords"]))
+        self.player = Player(sheet=self.player_animation_sheet, position=Vector2(*self.player_state["coords"]))
         
         self.player.init(self.window)# Mari u forgot to init the player
+
+        Rect2D().init(self.window)
     
     def change_player_state(self, new_direction=None, offset_x=0, offset_y=0, new_state = None):
         if new_direction:
