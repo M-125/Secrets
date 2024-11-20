@@ -65,10 +65,14 @@ class HookedDict(dict):
     def __setitem__(self, key, value):
         old_value = self.get(key, None)
         
+        super().__setitem__(key, value)
+        
         if old_value != value:
             self.on_change(key, old_value, value)
         
-        super().__setitem__(key, value)
+    
+    def no_trigger_set(self,key,value):
+        super().__setitem__(key,value)
 
 class Main:
     def __init__(self, fps, window_width, window_height):
@@ -89,6 +93,7 @@ class Main:
         if item_id == "coords":
             #self.player.position = pygame.Vector2(new_value[0], new_value[1])
             self.player.move_to(pygame.Vector2(new_value[0], new_value[1])) # move is using velocity and not position so created move_to
+            self.player_state.no_trigger_set("coords",self.player.position)
             #print(f"Player was moved to x={new_value[0]}, y={new_value[1]}")
         elif item_id == "direction":
             self.player.play_sheet(self.player_state["state"] + "_" + new_value)
