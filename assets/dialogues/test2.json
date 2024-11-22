@@ -1,0 +1,54 @@
+{"name":"defaultname",
+    "_dialogue":{"start": [
+        {
+            "_name":"Hayley",
+            "dialogue":[
+            "Hello, are you by any chance my guide?",
+            {"_jump":"start/0/talk2"}
+            ],
+
+            "talk2":{"start":[
+                "1",
+                "2",
+                "3"
+            ]}
+        },
+        {
+            "_name":"Girl",
+            "dialogue":[
+            "..."
+            ]
+        },
+        {
+            "_name":"Hayley",
+            "dialogue":[
+            "Hello?",
+            "Are you by any chance my..."
+            ]
+        },
+        {
+            "_name":"Girl",
+            "dialogue":[
+            "Not a chance..."
+            ]
+        },
+        {
+            "_name":"Hayley",
+            "dialogue":[
+                "..."
+            ]
+        },
+        {
+            "_name":"Girl",
+            "dialogue":[
+            "..."
+            ]
+        },
+        {
+            "_name":"Hayley",
+            "dialogue":[
+            "... I'll keep looking around then."
+            ]
+        },"_end"
+    ]
+}}

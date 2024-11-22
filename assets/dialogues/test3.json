@@ -1,0 +1,5 @@
+{"name":"idk",
+"_dialogue":{"start":[
+    {"jumphere":{"start":["1","2"]}},
+    {"_jump":"start/0/jumphere"}
+]}}

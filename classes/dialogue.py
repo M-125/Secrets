@@ -7,16 +7,19 @@ class Dialogue:
         self.ended=False
         self.inventory=inventory
         
+        
     def next(self):
 
         strings=self.current_dialogue.split("/")
-        while not strings[-1].isnumeric():
+        while not strings[-1].isnumeric() and not strings[-1]=="_dialogue":
             strings.pop()
-        if strings[-1]!="dialogue":
+        
+        print(strings)
+        if strings[-1]!="_dialogue":
             strings[-1]=str(int(strings[-1])+1)
         self.current_dialogue=""
         for e in strings:
-            if e !="dialogue":self.current_dialogue+="/"
+            if e !="_dialogue":self.current_dialogue+="/"
             self.current_dialogue+=e
         
         try:
@@ -27,24 +30,31 @@ class Dialogue:
                     if e.isnumeric():
                         e=int(e)
                     testdialogue=testdialogue[e]
+            print("n",self.current_dialogue)
         except Exception:
+
             strings.pop()
             self.current_dialogue=""
             for e in strings:
-                if e !="dialogue":self.current_dialogue+="/"
+                if e !="_dialogue":self.current_dialogue+="/"
                 self.current_dialogue+=e
-            
+            print("nx",self.current_dialogue)
 
-            if self.current_dialogue=="dialogue":
+            if self.current_dialogue=="_dialogue":
                 self.ended=True
                 return False
             else:
                 return self.next()
+        
+        
+        if self.current_dialogue=="_dialogue":
+            self.ended=True
+            return False
         return True
     
     def jump(self,dial):
         if dial!="":
-            self.current_dialogue="dialogue/"+dial
+            self.current_dialogue="_dialogue/"+dial
         else:
             if not self.next():
                 return " "," ",["_end"]
@@ -54,12 +64,17 @@ class Dialogue:
         if self.next(): return self.dialogue()
         else:   return " "," ",["_end"]
 
+    def change_values(self,d:dict):
+        if "_name" in d:
+            self.dialogues["name"]=d["_name"]
+
     def dialogue(self,option=""):
       if not self.ended:
+        print(self.current_dialogue)
 ###get dialogue
         
         if self.current_dialogue=="":
-            self.current_dialogue="dialogue/0"
+            self.current_dialogue="_dialogue"
         if option!="":self.current_dialogue+="/"+option
         dialogue=self.dialogues
         
@@ -73,7 +88,11 @@ class Dialogue:
         
         if type(dialogue) == str:
             print(self.current_dialogue)
-            
+            if dialogue=="_end":
+                if self.next() :
+                    return self.dialogue()
+                else:
+                    return " "," ",["_end"]
             if self.next() :
                 return self.dialogues["name"],dialogue,[]
             else:
@@ -81,8 +100,17 @@ class Dialogue:
         
 
         if type(dialogue) == dict:
-            print(self.current_dialogue)
-            if "options" in dialogue:return self.dialogues["name"],dialogue["text"],dialogue["options"]
+
+            self.change_values(dialogue)
+
+            #start dict
+            if "start" in dialogue:
+                self.current_dialogue+="/start"
+                return self.dialogue()
+            elif "dialogue" in dialogue:
+                self.current_dialogue+="/dialogue"
+                return self.dialogue()
+            elif "options" in dialogue:return self.dialogues["name"],dialogue["text"],dialogue["options"]
             
             ### JUMP command
             elif "_jump" in dialogue: 
@@ -110,9 +138,11 @@ class Dialogue:
             elif "_give_item" in dialogue:
                 self.inventory.add_item(dialogue["_give_item"])
                 return self.skip()
-            else:
+            elif "text" in dialogue:
                 if self.next(): return self.dialogues["name"],dialogue["text"],[]
                 else:   return self.dialogues["name"],dialogue["text"],["_end"]
+            else:
+                return self.skip()
             #return dialogue
         if type(dialogue)==list:
             self.current_dialogue+="/0"
