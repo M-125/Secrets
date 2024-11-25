@@ -1,5 +1,7 @@
 import os
 
+from DSEngine.animated import AnimationSheet
+
 # Allows this to be run from a blank CMD instance for Mari
 if os.getenv("USERNAME") == "energ":
     os.chdir("F:\\Game Jam Workspace\\Secrets")
@@ -12,6 +14,15 @@ from pygame.display import update
 from functools import partial
 import glob
 import re
+
+def convert_paths_to_images(paths_list):
+        images_list = []
+        for path in paths_list:
+            new_img = Image2D(path)
+            images_list.append(new_img)
+        return images_list
+
+
 
 # window = Window(fps=120, size=(1280, 720))
 # type2d = Type2D("GUI")
@@ -46,6 +57,13 @@ class Player(AnimatedSprite2D):
     def render(self,window:Window):
         window.current_camera.position=self.position-tuple(divide/2 for divide in window.size)
         super().render(window)
+class Npc(AnimatedSprite2D):
+    def __init__(self, sheet: str, layer=1, position=Vector2(), size=None, offset=Vector2()):
+        print(Spritesheet(0,*convert_paths_to_images(glob.glob("assets/textures/npcs/"+sheet+"/*"))))
+        Sheet=AnimationSheet(Image2D("assets/textures/npcs/"+sheet+"/npc0.png"),
+                             idle=Spritesheet(0,*convert_paths_to_images(glob.glob("assets/textures/npcs/"+sheet+"/*"))))
+        super().__init__(Sheet, layer, position, size, offset)
+        self.debug=True
 
 class HookedDict(dict):
     def __init__(self, *args, **kwargs):
@@ -91,6 +109,7 @@ class Main:
         
     def update_player(self, item_id, old_value, new_value): # When the self.player_state dictionary is updated, this method is called. Allows management of the players state in a single central area.
         if item_id == "coords":
+            self.player.debug=not self.player.debug
             #self.player.position = pygame.Vector2(new_value[0], new_value[1])
             self.player.move_to(pygame.Vector2(new_value[0], new_value[1])) # move is using velocity and not position so created move_to
             self.player_state.no_trigger_set("coords",self.player.position)
@@ -102,19 +121,15 @@ class Main:
         else:
             pass
             
-    def convert_paths_to_images(self, paths_list):
-        images_list = []
-        for path in paths_list:
-            new_img = Image2D(path)
-            new_img.init(self.window)
-            images_list.append(new_img)
-        return images_list
+    
     
 
     def __postinit__(self):
         self.type2d = Type2D("GUI")
         self.type2d.init(self.window)
         
+        npcCoords=[Vector2(200,200)]
+        self.npcs=[Npc("npc"+str(e), position=npcCoords[e]) for e in range(len(npcCoords))]
         
         self.player_frame_time = 1
         self.player_default = Image2D(filename=f"assets/textures/player/idle_{self.player_state['direction']}_0000.png", position=Vector2(*self.player_state["coords"])) # why does an image have a position? does this not represent an abstract idea of an image? i guess i'll find out somehow
@@ -156,6 +171,8 @@ class Main:
         self.player = Player(sheet=self.player_animation_sheet, position=Vector2(*self.player_state["coords"]))
         
         self.player.init(self.window)# Mari u forgot to init the player
+        for e in self.npcs:
+            e.init(self.window)
 
         Rect2D().init(self.window)
     
